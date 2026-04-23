@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-resiliente
+spec:
+  replicas: 3 # Importante para la dinámica
+  selector:
+    matchLabels:
+      app: mi-clase
+  template:
+    metadata:
+      labels:
+        app: mi-clase
+    spec:
+      containers:
+      - name: nginx-api
+        image: nginx:alpine
+        resources:
+          limits:
+            cpu: "200m"
+            memory: "128Mi"

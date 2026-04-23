@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitor-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitor
+  template:
+    metadata:
+      labels:
+        app: monitor
+    spec:
+      containers:
+      - name: web-monitor
+        image: nginx:alpine
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        configMap:
+          name: frontend-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  index.html: |
+    <html>
+      <body style="background: #121212; color: #00ff00; font-family: monospace;">
+        <h1>Arquitectura Keops - Monitor de Tráfico</h1>
+        <div id="data">Cargando datos del balanceador...</div>
+        <script>
+          setInterval(() => {
+            fetch('/api')
+              .then(response => response.json())
+              .then(data => {
+                document.getElementById('data').innerHTML = "Pod ID: " + data.id + " - Info: " + data.title;
+              });
+          }, 1000);
+        </script>
+      </body>
+    </html>
