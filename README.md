@@ -29,9 +29,10 @@ docker image prune -f
 # Borra redes y volúmenes sin uso
 docker system prune --volumes -f
 
-## Image Pull Back
-# 1. Asegúrate de que la imagen existe en Docker Desktop
-docker images
+# Image Pull Back
 
-# 2. Cárgala al cluster (reemplaza con tu nombre de imagen y cluster)
-kind load docker-image mi-api-backend:latest --name arquitectura-proyectos
+    1. Asegúrate de que la imagen existe en Docker Desktop
+    docker images
+
+    2. Cárgala al cluster (reemplaza con tu nombre de imagen y cluster)
+    kind load docker-image mi-api-backend:latest --name arquitectura-proyectos
