@@ -10,10 +10,11 @@ docker pull nginx:alpine
 kind load docker-image nginx:alpine --name docker-desktop
 
 # Deploy PODS
+kubectl apply -f balanceador-practica.yaml
 kubectl apply -f balanceo.yaml
 
 # Monitor de puertos
-kubectl port-forward svc/api-balanceador 8080:80
+kubectl port-forward svc/mi-balanceador-web 8080:80
 
 # En una consola generar el monitor de pods
 kubectl logs -l app=mi-api --tail=1
