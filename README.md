@@ -9,7 +9,7 @@ kubectl get pods -w
 
 # Borrar una terminal para simular una caida
 kubectl delete pod [NOMBRE_DE_UN_POD]
-kubectl delete pod api-resiliente-8448f6599c-bss4z
+kubectl delete pod api-resiliente-8448f6599c-956sg
 
 # Validar que en el momento que uno termina se crea otro
 La Observación: En la terminal de monitoreo, verán que en el segundo exacto en que uno dice Terminating, aparece otro en Pending -> Running.
@@ -34,5 +34,8 @@ docker system prune --volumes -f
     1. Asegúrate de que la imagen existe en Docker Desktop
     docker images
 
-    2. Cárgala al cluster (reemplaza con tu nombre de imagen y cluster)
-    kind load docker-image mi-api-backend:latest --name arquitectura-proyectos
+    2. Descargar manuamente la imagen
+    docker pull nginx:alpine
+
+    3. Cárgala al cluster (reemplaza con tu nombre de imagen y cluster)
+    kind load docker-image nginx:alpine --name desktop 

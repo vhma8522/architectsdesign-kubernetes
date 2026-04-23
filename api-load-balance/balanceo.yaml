@@ -1,0 +1,39 @@
+# --- SERVICIO BALANCEADOR ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-balanceador
+spec:
+  selector:
+    app: mi-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP # Uso interno dentro del cluster
+---
+# --- DESPLIEGUE DEL BACKEND (API SIMULADA) ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mi-api
+  template:
+    metadata:
+      labels:
+        app: mi-api
+    spec:
+      containers:
+      - name: nginx-server
+        image: nginx:alpine # Imagen ligera y de uso libre
+        imagePullPolicy: IfNotPresent 
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "64Mi"

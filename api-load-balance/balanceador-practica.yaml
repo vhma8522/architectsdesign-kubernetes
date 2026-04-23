@@ -1,0 +1,36 @@
+# --- EL BALANCEADOR (SERVICE) ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mi-balanceador-web
+spec:
+  type: NodePort
+  selector:
+    app: api-clase
+  ports:
+    - protocol: TCP
+      port: 80          # Puerto del servicio
+      targetPort: 80    # Puerto del contenedor (Nginx)
+      nodePort: 31000   # Puerto mapeado al host Windows
+---
+# --- LOS PODS (DEPLOYMENT) ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-replicas
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-clase
+  template:
+    metadata:
+      labels:
+        app: api-clase
+    spec:
+      containers:
+      - name: nginx-lite
+        image: nginx:alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80

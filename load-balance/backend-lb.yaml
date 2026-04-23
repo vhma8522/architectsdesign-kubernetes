@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: api-container
-        image: bitnami/node-example:0.0.1 # Imagen ligera de ejemplo
+        image: bitnami/node-example:latest # Imagen ligera de ejemplo
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
