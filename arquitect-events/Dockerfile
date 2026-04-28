@@ -16,9 +16,12 @@ RUN apk add --no-cache curl tar \
 # Exponemos los puertos principales:
 # 61616: Protocolo OpenWire (JMS)
 # 8161: Panel de administración Web
-EXPOSE 61616 8161
+EXPOSE 61616 8161 61613
 
 WORKDIR $ACTIVEMQ_HOME
+
+# Modificamos el archivo de configuración de Jetty para permitir conexiones externas
+RUN sed -i 's/127.0.0.1/0.0.0.0/g' $ACTIVEMQ_HOME/conf/jetty.xml
 
 # Lanzamos ActiveMQ
 CMD ["/bin/sh", "-c", "bin/activemq console"]
