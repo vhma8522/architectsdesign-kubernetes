@@ -9,7 +9,7 @@ kubectl get pods -w
 
 # Borrar una terminal para simular una caida
 kubectl delete pod [NOMBRE_DE_UN_POD]
-kubectl delete pod api-resiliente-8448f6599c-956sg
+kubectl delete pod api-replicas-6556c94564-dx7kn
 
 # Validar que en el momento que uno termina se crea otro
 La Observación: En la terminal de monitoreo, verán que en el segundo exacto en que uno dice Terminating, aparece otro en Pending -> Running.
