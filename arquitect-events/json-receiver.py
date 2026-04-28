@@ -12,33 +12,37 @@ class ValidatingListener(stomp.ConnectionListener):
         try:
             payload = json.loads(frame.body)
             
+            print(f"Inicio DEBUG - Validando mensaje...")
+            print(f"DEBUG - Recibido: {frame.body}") # Agrega esto
+            print(f"FIN DEBUG - Validando mensaje...")
+
             # Validación usando el esquema centralizado
             validate(instance=payload, schema=PEDIDO_SCHEMA)
             
-            print(f" [+] Mensaje VÁLIDO: Pedido #{payload['id_pedido']} de {payload['cliente']}")
+            print(f" RECEIVER [+] Mensaje VÁLIDO: Pedido #{payload['id_pedido']} de {payload['cliente']}")
             
         except ValidationError as e:
             print(f" [!] ERROR DE CONTRATO: {e.message}")
         except json.JSONDecodeError:
-            print(" [!] ERROR: El cuerpo no es un JSON válido.")
+            print(" RECEIVER [!] ERROR: El cuerpo no es un JSON válido.")
 
 # Configuración de conexión
 
 #TODO: Hacer ejecicio de try-catch para manejar errores de conexión
 
 ## Conexion desde windows local
-conn = stomp.Connection([('127.0.0.1', 61613)])
+#conn = stomp.Connection([('127.0.0.1', 61613)])
 
 ## Conexion desde docker-compose
 conn = stomp.Connection([('activemq', 61613)])
 
-conn.set_listener('', ValidatingListener())
+conn.set_listener('validate_esquema', ValidatingListener())
 #TODO: Cambiar a contraseñas seguras en enviroment or secrets
 conn.connect('admin', 'admin', wait=True)
 
-conn.subscribe(destination='/queue/PedidosValidados', id=1, ack='auto')
+conn.subscribe(destination='/queue/PedidosJSON', id=1, ack='auto')
 
-print(' [*] Receptor iniciado (Esquema cargado de librería central)')
+print(' RECEIVER [*] Receptor iniciado (Esquema cargado de librería central)')
 while True:
     try:
         time.sleep(1)

@@ -5,7 +5,7 @@ import time
 # Datos del mensaje en formato diccionario
 data = {
     "id_pedido": 1025,
-    "cliente": "Victor Hugo Martinez",
+    "cliente": "Vi",
     "productos": [
         {"item": "Laptop iMac 24", "cantidad": 1},
         {"item": "Mouse Inalámbrico", "cantidad": 2}
@@ -15,7 +15,7 @@ data = {
 }
 
 # Configuración de conexión
-conn = stomp.Connection([('127.0.0.1', 61613)])
+#conn = stomp.Connection([('127.0.0.1', 61613)])
 ## Conexion desde docker-compose
 conn = stomp.Connection([('activemq', 61613)])
 
@@ -27,7 +27,7 @@ json_payload = json.dumps(data)
 # Enviar a la cola
 conn.send(body=json_payload, destination='/queue/PedidosJSON')
 
-print(" [x] JSON enviado con éxito:")
+print(" SENDER [x] JSON enviado con éxito:")
 print(json_payload)
 
 conn.disconnect()
