@@ -16,6 +16,9 @@ data = {
 
 # Configuración de conexión
 conn = stomp.Connection([('127.0.0.1', 61613)])
+## Conexion desde docker-compose
+conn = stomp.Connection([('activemq', 61613)])
+
 conn.connect('admin', 'admin', wait=True)
 
 # Convertir el diccionario a una cadena JSON

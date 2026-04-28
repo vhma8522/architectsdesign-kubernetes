@@ -23,9 +23,19 @@ class ValidatingListener(stomp.ConnectionListener):
             print(" [!] ERROR: El cuerpo no es un JSON válido.")
 
 # Configuración de conexión
+
+#TODO: Hacer ejecicio de try-catch para manejar errores de conexión
+
+## Conexion desde windows local
 conn = stomp.Connection([('127.0.0.1', 61613)])
+
+## Conexion desde docker-compose
+conn = stomp.Connection([('activemq', 61613)])
+
 conn.set_listener('', ValidatingListener())
+#TODO: Cambiar a contraseñas seguras en enviroment or secrets
 conn.connect('admin', 'admin', wait=True)
+
 conn.subscribe(destination='/queue/PedidosValidados', id=1, ack='auto')
 
 print(' [*] Receptor iniciado (Esquema cargado de librería central)')
