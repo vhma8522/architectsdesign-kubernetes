@@ -5,7 +5,7 @@ import time
 # Datos del mensaje en formato diccionario
 data = {
     "id_pedido": 1025,
-    "cliente": "Vi",
+    "cliente": "Victor Hugo Martinez",
     "productos": [
         {"item": "Laptop iMac 24", "cantidad": 1},
         {"item": "Mouse Inalámbrico", "cantidad": 2}

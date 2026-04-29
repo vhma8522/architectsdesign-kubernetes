@@ -12,9 +12,9 @@ class ValidatingListener(stomp.ConnectionListener):
         try:
             payload = json.loads(frame.body)
             
-            print(f"Inicio DEBUG - Validando mensaje...")
-            print(f"DEBUG - Recibido: {frame.body}") # Agrega esto
-            print(f"FIN DEBUG - Validando mensaje...")
+            #print(f"Inicio DEBUG - Validando mensaje...")
+            #print(f"DEBUG - Recibido: {frame.body}") # Agrega esto
+            #print(f"FIN DEBUG - Validando mensaje...")
 
             # Validación usando el esquema centralizado
             validate(instance=payload, schema=PEDIDO_SCHEMA)
@@ -22,7 +22,8 @@ class ValidatingListener(stomp.ConnectionListener):
             print(f" RECEIVER [+] Mensaje VÁLIDO: Pedido #{payload['id_pedido']} de {payload['cliente']}")
             
         except ValidationError as e:
-            print(f" [!] ERROR DE CONTRATO: {e.message}")
+            print(f" RECEIVER [!] ERROR DE CONTRATO: {e.message}")
+            
         except json.JSONDecodeError:
             print(" RECEIVER [!] ERROR: El cuerpo no es un JSON válido.")
 
