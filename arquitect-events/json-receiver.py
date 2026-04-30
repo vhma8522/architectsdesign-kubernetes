@@ -1,13 +1,22 @@
+from venv import logging as logger
+
 import stomp
 import json
 import time
 import sys
 from jsonschema import validate, ValidationError
 
+# Loggeres para monitoreo
+# Configura el nivel a INFO y define un formato opcional
+logger.basicConfig(level=logger.INFO, format='%(levelname)s: %(message)s')
+
+logger = logger.getLogger(__name__)
+
 # IMPORTACIÓN DESDE LA LIBRERÍA CENTRAL
 from schemas_lib import PEDIDO_SCHEMA
 
 class ValidatingListener(stomp.ConnectionListener):
+    topicsend = '/topic/PedidosErrores'
     def on_message(self, frame):
         try:
             payload = json.loads(frame.body)
@@ -20,30 +29,46 @@ class ValidatingListener(stomp.ConnectionListener):
             validate(instance=payload, schema=PEDIDO_SCHEMA)
             
             print(f" RECEIVER [+] Mensaje VÁLIDO: Pedido #{payload['id_pedido']} de {payload['cliente']}")
-            
+        
+        #TODO: Enviar a Topico sin procesar y avisar del error
         except ValidationError as e:
             print(f" RECEIVER [!] ERROR DE CONTRATO: {e.message}")
+            self.topicsend = '/topic/Pedidos_Contract'
             
         except json.JSONDecodeError:
             print(" RECEIVER [!] ERROR: El cuerpo no es un JSON válido.")
+            self.topicsend = '/topic/Pedidos_Contract'
 
 # Configuración de conexión
 
 #TODO: Hacer ejecicio de try-catch para manejar errores de conexión
 
 ## Conexion desde windows local
-#conn = stomp.Connection([('127.0.0.1', 61613)])
+param_host = '127.0.0.1' # Conexion desde windows local 127.0.0.1
+conn = stomp.Connection([(param_host, 61613)])
 
 ## Conexion desde docker-compose
-conn = stomp.Connection([('activemq', 61613)])
+##conn = stomp.Connection([('activemq', 61613)])
 
 conn.set_listener('validate_esquema', ValidatingListener())
+
 #TODO: Cambiar a contraseñas seguras en enviroment or secrets
-conn.connect('admin', 'admin', wait=True)
+try:
+    conn.connect('admin', 'admin', wait=True)   
+except Exception as e:
+    logger.error(f" ERROR DE CONEXIÓN: No se pudo conectar a ActiveMQ con las credenciales proporcionadas. Detalles: {e}")
+    param_host = 'activemq' # Conexion desde docker-compose
+    conn = stomp.Connection([(param_host, 61613)])
+    conn.connect('admin', 'admin', wait=True)
 
-conn.subscribe(destination='/queue/PedidosJSON', id=1, ack='auto')
+logger.info(f"Conectado a ActiveMQ en {[(param_host, 61613)]}")
 
+logger.info(f"Subscrito a ActiveMQ en {ValidatingListener().topicsend}")
+conn.subscribe(destination=ValidatingListener().topicsend, id=1, ack='auto')
+
+logger.info(f" RECEIVER Logger [*] Receptor iniciado (Esquema cargado de librería central)'")
 print(' RECEIVER [*] Receptor iniciado (Esquema cargado de librería central)')
+
 while True:
     try:
         time.sleep(1)

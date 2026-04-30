@@ -20,7 +20,7 @@ PEDIDO_SCHEMA = {
         "metodo_pago": {"type": "string", "enum": ["efectivo", "tarjeta"]},
         "total": {"type": "number", "minimum": 0}
     },
-    "required": ["id_pedido", "cliente", "productos", "total"]
+    "required": ["id_pedido", "cliente", "productos", "total", "metodo_pago"]
 }
 
 # Puedes centralizar otros esquemas aquí
