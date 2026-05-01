@@ -1,6 +1,7 @@
 import stomp
 import json
 import time
+import os
 
 # Datos del mensaje en formato diccionario
 data = {
@@ -13,6 +14,13 @@ data = {
     "total": 2550.00,
     "timestamp": time.ctime()
 }
+
+# Leemos las variables inyectadas por Docker
+HOST = os.getenv('BROKER_HOST')
+PORT = int(os.getenv('BROKER_PORT', 61613))
+USER = os.getenv('BROKER_USER')
+PASS = os.getenv('BROKER_PASSWORD')
+DESTINATION = os.getenv('QUEUE_VALIDADOS')
 
 # Configuración de conexión
 #conn = stomp.Connection([('127.0.0.1', 61613)])

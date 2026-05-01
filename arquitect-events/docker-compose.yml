@@ -4,13 +4,13 @@ services:
     container_name: broker-lab
     ports:
       # Panel de Administración Web
-      - "8161:8161"
+      - "8162:8161"
       # Protocolo OpenWire (JMS)
-      - "61616:61616"
+      - "61617:61616"
       # Protocolo STOMP (Para los scripts de Python)
-      - "61613:61613"
+      - "61614:61613"
       # Protocolo MQTT (Opcional, para IoT)
-      - "1883:1883"
+      - "1884:1883"
     environment:
       - ACTIVEMQ_ADMIN_USER=admin
       - ACTIVEMQ_ADMIN_PASSWORD=admin
@@ -22,5 +22,13 @@ services:
       - .:/app
     working_dir: /app
     command: sh -c "pip install -r requirements.txt && tail -f /dev/null"
+    # Inyectamos las variables del archivo .env al sistema operativo del contenedor
+    environment:
+      - BROKER_HOST=${BROKER_HOST}
+      - BROKER_PORT=${BROKER_PORT}
+      - BROKER_USER=${BROKER_USER}
+      - BROKER_PASSWORD=${BROKER_PASSWORD}
+      - QUEUE_VALIDADOS=${QUEUE_VALIDADOS}
+      - QUEUE_ERRORES=${QUEUE_ERRORES}
     depends_on:
       - activemq

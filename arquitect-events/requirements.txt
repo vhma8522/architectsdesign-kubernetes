@@ -1,2 +1,4 @@
 stomp.py
 jsonschema
+pytest
+pytest-mock

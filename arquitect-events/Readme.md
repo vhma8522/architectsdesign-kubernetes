@@ -43,3 +43,9 @@ docker-compose restart python-lab
 # Eliminar ambiente
 docker-compose down
 docker-compose down --rmi all
+
+# Ejecutar pruebas
+# Unitarias
+docker exec -it cliente-python pytest test_sender.py # Mock
+docker exec -it cliente-python python json_sender.py # Variables de entorno
+# Integracion

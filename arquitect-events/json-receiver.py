@@ -5,6 +5,7 @@ import json
 import time
 import sys
 from jsonschema import validate, ValidationError
+import os
 
 # Loggeres para monitoreo
 # Configura el nivel a INFO y define un formato opcional
@@ -14,6 +15,15 @@ logger = logger.getLogger(__name__)
 
 # IMPORTACIÓN DESDE LA LIBRERÍA CENTRAL
 from schemas_lib import PEDIDO_SCHEMA
+
+# Leemos las variables inyectadas por Docker
+HOST = os.getenv('BROKER_HOST')
+PORT = int(os.getenv('BROKER_PORT', 61613))
+USER = os.getenv('BROKER_USER')
+PASS = os.getenv('BROKER_PASSWORD')
+DESTINATION = os.getenv('QUEUE_VALIDADOS')
+
+logger.info(f"Configuración de conexión: HOST={HOST}, PORT={PORT}, USER={USER}, DESTINATION={DESTINATION}")
 
 class ValidatingListener(stomp.ConnectionListener):
     topicsend = '/topic/PedidosErrores'
