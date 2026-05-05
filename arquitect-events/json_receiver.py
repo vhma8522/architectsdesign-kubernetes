@@ -22,11 +22,21 @@ PORT = int(os.getenv('BROKER_PORT', 61613))
 USER = os.getenv('BROKER_USER')
 PASS = os.getenv('BROKER_PASSWORD')
 DESTINATION = os.getenv('QUEUE_VALIDADOS')
+DESTINATION = os.getenv('QUEUE_VALIDADOS')
 
 logger.info(f"Configuración de conexión: HOST={HOST}, PORT={PORT}, USER={USER}, DESTINATION={DESTINATION}")
 
+# Cargamos los datos
+def load_json_asset(filename):
+    # Obtenemos la ruta absoluta respecto al archivo actual
+    base_path = os.path.dirname(__file__)
+    file_path = os.path.join(base_path, 'assets', filename)
+    with open(file_path, 'r') as f:
+        return json.load(f)
+    
 class ValidatingListener(stomp.ConnectionListener):
-    topicsend = '/topic/PedidosErrores'
+    topicsend = None
+   
     def on_message(self, frame):
         try:
             payload = json.loads(frame.body)
@@ -37,6 +47,7 @@ class ValidatingListener(stomp.ConnectionListener):
 
             # Validación usando el esquema centralizado
             validate(instance=payload, schema=PEDIDO_SCHEMA)
+            self.topicsend = '/topic/PedidosErrores'
             
             print(f" RECEIVER [+] Mensaje VÁLIDO: Pedido #{payload['id_pedido']} de {payload['cliente']}")
         
@@ -47,7 +58,7 @@ class ValidatingListener(stomp.ConnectionListener):
             
         except json.JSONDecodeError:
             print(" RECEIVER [!] ERROR: El cuerpo no es un JSON válido.")
-            self.topicsend = '/topic/Pedidos_Contract'
+            self.topicsend = '/topic/Pedidos_Invalid'
 
 # Configuración de conexión
 

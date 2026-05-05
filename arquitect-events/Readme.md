@@ -2,6 +2,7 @@ Ejecuta estos comandos en tu terminal para poner el broker en marcha:
 
 # Construir la imagen:
 docker-compose up -d
+docker-compose up -d --build
 
 # Correr el contenedor:
 docker run -d -p 8161:8161 -p 61616:61616 -p 61613:61613 --name broker-lab activemq-lab
@@ -45,7 +46,15 @@ docker-compose down
 docker-compose down --rmi all
 
 # Ejecutar pruebas
+# Regenerar las imagens para incluir los nuevos paquetes
+docker-compose up -d --build
+
 # Unitarias
 docker exec -it cliente-python pytest test_sender.py # Mock
 docker exec -it cliente-python python json_sender.py # Variables de entorno
+docker exec -it cliente-python python -m pytest test/test_receiver.py
 # Integracion
+
+# Code Coverage
+docker exec -it cliente-python pytest --cov=. --cov-report=term-missing
+docker exec -it cliente-python pytest --cov=. --cov-report=html

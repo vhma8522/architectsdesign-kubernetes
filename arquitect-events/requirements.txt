@@ -2,3 +2,4 @@ stomp.py
 jsonschema
 pytest
 pytest-mock
+pytest-cov
