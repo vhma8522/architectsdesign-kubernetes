@@ -45,9 +45,16 @@ docker-compose restart python-lab
 docker-compose down
 docker-compose down --rmi all
 
+# Eliminar ambiente y regrenerar sin cache
+docker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+
 # Ejecutar pruebas
 # Regenerar las imagens para incluir los nuevos paquetes
 docker-compose up -d --build
+
+
 
 # Unitarias
 docker exec -it cliente-python pytest test_sender.py # Mock
