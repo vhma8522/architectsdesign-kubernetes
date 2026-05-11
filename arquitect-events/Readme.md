@@ -59,7 +59,8 @@ docker-compose up -d --build
 # Unitarias
 docker exec -it cliente-python pytest test_sender.py # Mock
 docker exec -it cliente-python python json_sender.py # Variables de entorno
-docker exec -it cliente-python python -m pytest test/test_receiver.py
+docker exec -it cliente-python python -m pytest tests/test_receiver.py
+
 # Integracion
 
 # Code Coverage

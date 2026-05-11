@@ -33,6 +33,7 @@ def load_json_asset(filename):
     file_path = os.path.join(base_path, 'assets', filename)
     with open(file_path, 'r') as f:
         return json.load(f)
+
     
 class ValidatingListener(stomp.ConnectionListener):
     topicsend = None
@@ -40,10 +41,6 @@ class ValidatingListener(stomp.ConnectionListener):
     def on_message(self, frame):
         try:
             payload = json.loads(frame.body)
-            
-            #print(f"Inicio DEBUG - Validando mensaje...")
-            #print(f"DEBUG - Recibido: {frame.body}") # Agrega esto
-            #print(f"FIN DEBUG - Validando mensaje...")
 
             # Validación usando el esquema centralizado
             validate(instance=payload, schema=PEDIDO_SCHEMA)
@@ -60,8 +57,7 @@ class ValidatingListener(stomp.ConnectionListener):
             print(" RECEIVER [!] ERROR: El cuerpo no es un JSON válido.")
             self.topicsend = '/topic/Pedidos_Invalid'
 
-# Configuración de conexión
-
+"""
 #TODO: Hacer ejecicio de try-catch para manejar errores de conexión
 
 ## Conexion desde windows local
@@ -83,9 +79,28 @@ except Exception as e:
     conn.connect('admin', 'admin', wait=True)
 
 logger.info(f"Conectado a ActiveMQ en {[(param_host, 61613)]}")
-
 logger.info(f"Subscrito a ActiveMQ en {ValidatingListener().topicsend}")
 conn.subscribe(destination=ValidatingListener().topicsend, id=1, ack='auto')
+"""
+
+# Configuración de conexión
+# TODO LO QUE SEA EJECUCIÓN (Conexión, Suscripción, Bucles) 
+# DEBE IR DENTRO DE ESTE BLOQUE:
+if __name__ == "__main__":
+    # Aquí mueves la lógica de conexión que estaba "suelta"
+    host = os.getenv('BROKER_HOST', 'activemq')
+    conn = stomp.Connection([(host, 61613)])
+    
+    listener = ValidatingListener(conn)
+    conn.set_listener('router', listener)
+    
+    conn.connect('admin', 'admin', wait=True)
+    
+    # Asegúrate de que la variable de destino tenga un valor
+    destination = os.getenv('QUEUE_VALIDADOS', '/queue/PedidosValidados')
+    
+    print(f" [*] Suscribiéndose a {destination}")
+    conn.subscribe(destination=destination, id=1, ack='auto')
 
 logger.info(f" RECEIVER Logger [*] Receptor iniciado (Esquema cargado de librería central)'")
 print(' RECEIVER [*] Receptor iniciado (Esquema cargado de librería central)')
