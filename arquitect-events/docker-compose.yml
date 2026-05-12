@@ -3,14 +3,11 @@ services:
     build: .
     container_name: broker-lab
     ports:
-      # Panel de Administración Web
-      - "8162:8161"
-      # Protocolo OpenWire (JMS)
-      - "61617:61616"
-      # Protocolo STOMP (Para los scripts de Python)
-      - "61614:61613"
-      # Protocolo MQTT (Opcional, para IoT)
-      - "1884:1883"
+      - "8161:8161"     # Consola Web (Suele estar libre)
+      - "61613:61613"   # STOMP (Fundamental)
+      - "51611:61611"   # ANTES 61611 -> AHORA 51611
+      - "51614:61614"   # ANTES 61614 -> AHORA 51614
+      - "51616:61616"   # OpenWire alternativo
     environment:
       - ACTIVEMQ_ADMIN_USER=admin
       - ACTIVEMQ_ADMIN_PASSWORD=admin

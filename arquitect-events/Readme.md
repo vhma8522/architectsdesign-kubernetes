@@ -44,6 +44,10 @@ docker-compose restart python-lab
 # Eliminar ambiente
 docker-compose down
 docker-compose down --rmi all
+docker image prune -a
+# Detiene y elimina contenedores, redes y volúmenes definidos en tu docker-compose
+docker-compose down --volumes --remove-orphans
+docker network prune -f
 
 # Eliminar ambiente y regrenerar sin cache
 docker-compose down
@@ -53,8 +57,6 @@ docker-compose up -d
 # Ejecutar pruebas
 # Regenerar las imagens para incluir los nuevos paquetes
 docker-compose up -d --build
-
-
 
 # Unitarias
 docker exec -it cliente-python pytest test_sender.py # Mock
@@ -66,3 +68,21 @@ docker exec -it cliente-python python -m pytest tests/test_receiver.py
 # Code Coverage
 docker exec -it cliente-python pytest --cov=. --cov-report=term-missing
 docker exec -it cliente-python pytest --cov=. --cov-report=html
+
+## CI/CD
+# Local-first
+docker exec -it cliente-python python -m pytest tests/test_ci_smoke.py --cov=. --cov-fail-under=80
+
+# Prebuilt CI/CD
+## Paso A: Limpieza de Caché
+docker exec -it cliente-python find . -name "__pycache__" -type d -exec rm -rf {} +
+
+## Paso B: Validación de Estructura
+docker exec -it cliente-python bash -c "ls -l json_receiver.py tests/test_ci_smoke.py && python -m py_compile json_receiver.py"
+
+## Validamos sintaxis
+docker exec -it cliente-python python -m py_compile json_receiver.py
+docker exec -it cliente-python echo $?
+
+## Paso C: Ejecución de Smoke Tests
+docker exec -it cliente-python python -m pytest tests/test_ci_smoke.py -v

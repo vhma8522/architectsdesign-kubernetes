@@ -1,0 +1,3 @@
+[report]
+# Si el código nuevo no tiene suficientes pruebas, el pipeline fallará.
+fail_under = 95
